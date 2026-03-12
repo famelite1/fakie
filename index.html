@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PWA PIN Login</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icon.png">
+<style>
+  body { margin:0; font-family:system-ui, -apple-system, sans-serif; background:#000; color:#fff; }
+  .container { display:flex; flex-direction:column; height:100vh; justify-content:space-between; }
+  .header { text-align:center; padding:1rem; }
+  .logo { display:flex; justify-content:center; gap:1rem; }
+  .logo img { height:2rem; }
+  .warning { background:#842000; color:#fff; padding:.5rem; margin:0 1rem; border-radius:.25rem; font-size:.875rem; }
+  .prompt { text-align:center; margin-top:2rem; font-size:1.25rem; }
+  .circles { display:flex; justify-content:center; gap:.75rem; margin:1rem 0; }
+  .circle { width:1.25rem; height:1.25rem; border:2px solid #666; border-radius:50%; }
+  .circle.filled { background:#fff; }
+  .keypad { display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem; padding:0 1rem 2rem; }
+  .key { width:60px; height:60px; border-radius:50%; background:#1a1a1a; color:#fff; font-size:1.5rem; border:none; display:flex; align-items:center; justify-content:center; margin:0 auto; }
+  .key:active { background:#333; }
+  .footer { text-align:center; font-size:.875rem; padding-bottom:1rem; }
+  .link { color:#0af; text-decoration:underline; cursor:pointer; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div>
+    <div class="header">
+      <div class="logo">
+        <!-- you can either copy the two PNGs into the same folder with these names:
+             nsw-logo.png and service-nsw.png, or embed them inline using a data URI
+             below (replace PLACEHOLDER_BASE64 with the actual base64 data). -->
+        <!-- external files version -->
+        <img src="nsw-logo.png" alt="NSW">
+        <img src="service-nsw.png" alt="Service NSW">
+        <!-- inline version example:
+        <img src="data:image/png;base64,PLACEHOLDER_BASE64" alt="NSW">
+        <img src="data:image/png;base64,PLACEHOLDER_BASE64" alt="Service NSW">
+        -->
+      </div>
+      <div class="warning">Rego checks may be not be available from 5am on Sun 15 Mar to 8:30am on Sun 15 Mar.</div>
+      <div class="prompt">Log in with PIN</div>
+    </div>
+    <div class="circles" id="pin-indicators">
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+    </div>
+  </div>
+  <div class="keypad">
+    <button class="key" data-key="1">1</button>
+    <button class="key" data-key="2">2</button>
+    <button class="key" data-key="3">3</button>
+    <button class="key" data-key="4">4</button>
+    <button class="key" data-key="5">5</button>
+    <button class="key" data-key="6">6</button>
+    <button class="key" data-key="7">7</button>
+    <button class="key" data-key="8">8</button>
+    <button class="key" data-key="9">9</button>
+    <div></div>
+    <button class="key" data-key="0">0</button>
+    <button class="key" id="backspace">⌫</button>
+  </div>
+  <div class="footer">
+    <span class="link" id="reset-link">Reset PIN with email and password</span>
+  </div>
+</div>
+<script>
+  const indicators = document.querySelectorAll('.circle');
+  let pin = '';
+  const correctPin = '1234'; // placeholder
+
+  function updateIndicators() {
+    indicators.forEach((c,i)=>{
+      c.classList.toggle('filled', i < pin.length);
+    });
+  }
+
+  function pressKey(k) {
+    if (pin.length >= 4) return;
+    pin += k;
+    updateIndicators();
+    if (pin.length === 4) {
+      setTimeout(checkPin, 300);
+    }
+  }
+
+  function checkPin() {
+    if (pin === correctPin) {
+      alert('Logged in!');
+      // navigate or show next screen
+    } else {
+      alert('Incorrect PIN');
+      pin = '';
+      updateIndicators();
+    }
+  }
+
+  document.querySelectorAll('.key').forEach(btn=>{
+    btn.addEventListener('click',()=> pressKey(btn.dataset.key));
+  });
+  document.getElementById('backspace').addEventListener('click',()=>{
+    pin = pin.slice(0,-1);
+    updateIndicators();
+  });
+  document.getElementById('reset-link').addEventListener('click',()=>{
+    alert('Reset flow');
+  });
+</script>
+</body>
+</html>
