@@ -2,29 +2,69 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>PWA PIN Login</title>
+<title>Service NSW</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="icon.png">
 <style>
-  body { margin:0; font-family:system-ui, -apple-system, sans-serif; background:#181818; color:#fff; }
-  .container { display:flex; flex-direction:column; height:100vh; justify-content:flex-start; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, -apple-system, sans-serif; background: #111; color: #fff; height: 100vh; overflow: hidden; }
+
+  /* SCREENS */
+  .screen { display: none; width: 100%; height: 100vh; flex-direction: column; }
+  .screen.active { display: flex; }
+
+  /* LOGIN */
+  .login-top { flex: 1; display: flex; flex-direction: column; align-items: center; }
+  .logo-row { display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 1.5rem 1rem .5rem; }
+  .logo-row img { height: 3.2rem; }
+  .warning { display: flex; align-items: flex-start; gap: .7rem; background: #8b3500; color: #fff; padding: .85rem 1rem; width: 100%; border-left: 6px solid #d4a574; font-size: .95rem; font-weight: 500; line-height: 1.4; }
+  .warning img { width: 1.6rem; height: 1.6rem; flex-shrink: 0; margin-top: .05rem; }
+  .pin-title { margin-top: 2rem; font-size: 1.5rem; font-weight: 700; text-align: center; }
+  .pin-dots { display: flex; gap: 1.2rem; margin: 1.5rem 0 1rem; }
+  .dot { width: 2.2rem; height: 2.2rem; border: 2.5px solid #666; border-radius: 50%; background: transparent; transition: background .1s; }
+  .dot.filled { background: #555; border-color: #555; }
+  .reset-link { color: #4da6ff; text-decoration: underline; font-size: 1rem; cursor: pointer; margin-bottom: 1.5rem; }
+
+  /* KEYPAD */
+  .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: .35rem; padding: .5rem 1.5rem 2rem; width: 100%; background: #111; }
+  .key { height: 56px; border-radius: 1.2rem; background: #252525; border: none; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .key:active { background: #383838; }
+  .key-num { font-size: 1.4rem; font-weight: 400; line-height: 1; }
+  .key-sub { font-size: .6rem; color: #aaa; letter-spacing: .08em; }
+  .key-empty { background: transparent !important; pointer-events: none; }
+
+  /* SCREENSHOT SCREENS */
+  .screenshot-screen { position: relative; width: 100%; height: 100vh; overflow-y: auto; }
+  .screenshot-screen img.bg { width: 100%; display: block; }
+  .nav-hotspots { position: fixed; bottom: 0; left: 0; right: 0; height: 68px; display: flex; }
+  .hotspot { flex: 1; height: 100%; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+
+  /* legacy classes kept so nothing breaks */
+  .container { display:flex; flex-direction:column; } 
   .header { text-align:center; padding:1rem; }
   .logo { display:flex; justify-content:center; gap:1.5rem; }
   .logo img { height:3.5rem; }
   .warning {
-    display:flex; align-items:center; gap:.7rem;
-    background:#a33a00; color:#fff;
+    display:flex; align-items:flex-start; gap:.7rem;
+    background:#a34a00; color:#fff;
     padding:.9rem 1rem .9rem .9rem;
     margin:1.2rem auto 0 auto;
-    border-radius:.7rem;
+    border-radius:0;
     font-size:1.05rem;
     max-width:95vw;
-    box-shadow:0 2px 8px #0002;
+    box-shadow:none;
     font-weight:500;
+    border-left:8px solid #e6cdb2;
+    position:relative;
   }
   .warning-icon {
-    font-size:1.3rem; color:#ffb300; flex-shrink:0;
+    margin-top:.1rem;
+    width:2.2rem; height:2.2rem;
+    background:none;
+    flex-shrink:0;
+    display:inline-block;
   }
   .prompt { text-align:center; margin-top:2.5rem; font-size:1.7rem; font-weight:600; }
   .circles { display:flex; justify-content:center; gap:1.5rem; margin:2rem 0 1.2rem 0; }
@@ -32,106 +72,122 @@
   .circle.filled { background:#555; }
   .reset-link-wrap { text-align:center; margin-bottom:1.5rem; }
   .link { color:#0af; text-decoration:underline; cursor:pointer; font-size:1.1rem; }
-  .keypad { display:grid; grid-template-columns:repeat(3,1fr); gap:.4rem; padding:0 1.5rem 0.5rem; margin-top:.5rem; transition:opacity .2s; }
-  .key { width:80px; height:54px; border-radius:1.5rem; background:#232323; color:#fff; font-size:1.5rem; border:none; display:flex; align-items:center; justify-content:center; margin:0 auto; box-shadow:0 1px 4px #0002; }
-  .key:active { background:#333; }
-  .keypad.hide { opacity:0; pointer-events:none; height:0; }
 </style>
 </head>
 <body>
-<div class="container">
-  <div>
-    <div class="header">
-      <div class="logo">
-        <img src="nsw-logo.png" alt="NSW">
-        <img src="service-nsw.png" alt="Service NSW">
-      </div>
-      <div class="warning"><span class="warning-icon">&#9888;</span> Rego checks may be not be available from 5am on Sun 15 Mar to 8:30am on Sun 15 Mar.</div>
-      <div class="prompt">Log in with PIN</div>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="screen active">
+  <div class="login-top">
+    <div class="logo-row">
+      <img src="nsw-logo.png" alt="NSW">
+      <img src="service-nsw.png" alt="Service NSW">
     </div>
-    <div class="circles" id="pin-indicators">
-      <div class="circle"></div>
-      <div class="circle"></div>
-      <div class="circle"></div>
-      <div class="circle"></div>
+    <div class="warning">
+      <img src="warning-icon.png" alt="!">
+      <span>Rego checks may be not be available from 5am on Sun 15 Mar to 8:30am on Sun 15 Mar.</span>
     </div>
-    <div class="reset-link-wrap">
-      <span class="link" id="reset-link">Reset PIN with email and password</span>
+    <div class="pin-title">Log in with PIN</div>
+    <div class="pin-dots" id="pin-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
     </div>
+    <span class="reset-link">Reset PIN with email and password</span>
   </div>
-  <div class="keypad" id="keypad">
-    <button class="key" data-key="1">1</button>
-    <button class="key" data-key="2">2</button>
-    <button class="key" data-key="3">3</button>
-    <button class="key" data-key="4">4</button>
-    <button class="key" data-key="5">5</button>
-    <button class="key" data-key="6">6</button>
-    <button class="key" data-key="7">7</button>
-    <button class="key" data-key="8">8</button>
-    <button class="key" data-key="9">9</button>
-    <div></div>
-    <button class="key" data-key="0">0</button>
-    <button class="key" id="backspace">⌫</button>
-  </div>
-  <div class="footer">
-    <!-- ...existing code... -->
+  <div class="keypad">
+    <button class="key" data-n="1"><span class="key-num">1</span><span class="key-sub"> </span></button>
+    <button class="key" data-n="2"><span class="key-num">2</span><span class="key-sub">ABC</span></button>
+    <button class="key" data-n="3"><span class="key-num">3</span><span class="key-sub">DEF</span></button>
+    <button class="key" data-n="4"><span class="key-num">4</span><span class="key-sub">GHI</span></button>
+    <button class="key" data-n="5"><span class="key-num">5</span><span class="key-sub">JKL</span></button>
+    <button class="key" data-n="6"><span class="key-num">6</span><span class="key-sub">MNO</span></button>
+    <button class="key" data-n="7"><span class="key-num">7</span><span class="key-sub">PQRS</span></button>
+    <button class="key" data-n="8"><span class="key-num">8</span><span class="key-sub">TUV</span></button>
+    <button class="key" data-n="9"><span class="key-num">9</span><span class="key-sub">WXYZ</span></button>
+    <button class="key key-empty"></button>
+    <button class="key" data-n="0"><span class="key-num">0</span><span class="key-sub"> </span></button>
+    <button class="key" id="del-btn"><span class="key-num">⌫</span></button>
   </div>
 </div>
-<script>
-  const indicators = document.querySelectorAll('.circle');
-  let pin = '';
-  const correctPin = '1234'; // placeholder
-  const keypad = document.getElementById('keypad');
-  let keypadVisible = true;
 
-  function updateIndicators() {
-    indicators.forEach((c,i)=>{
-      c.classList.toggle('filled', i < pin.length);
-    });
+<!-- HOME SCREEN — drop home.png in the same folder -->
+<div id="home-screen" class="screen">
+  <div class="screenshot-screen">
+    <img class="bg" src="home.png" alt="Home">
+  </div>
+  <div class="nav-hotspots">
+    <div class="hotspot" onclick="showScreen('home-screen')"></div>
+    <div class="hotspot" onclick="showScreen('services-screen')"></div>
+    <div class="hotspot" onclick="showScreen('wallet-screen')"></div>
+  </div>
+</div>
+
+<!-- SERVICES SCREEN — drop services.png in the same folder -->
+<div id="services-screen" class="screen">
+  <div class="screenshot-screen">
+    <img class="bg" src="services.png" alt="Services">
+  </div>
+  <div class="nav-hotspots">
+    <div class="hotspot" onclick="showScreen('home-screen')"></div>
+    <div class="hotspot" onclick="showScreen('services-screen')"></div>
+    <div class="hotspot" onclick="showScreen('wallet-screen')"></div>
+  </div>
+</div>
+
+<!-- WALLET SCREEN — drop wallet.png in the same folder -->
+<div id="wallet-screen" class="screen">
+  <div class="screenshot-screen">
+    <img class="bg" src="wallet.png" alt="Wallet">
+  </div>
+  <div class="nav-hotspots">
+    <div class="hotspot" onclick="showScreen('home-screen')"></div>
+    <div class="hotspot" onclick="showScreen('services-screen')"></div>
+    <div class="hotspot" onclick="showScreen('wallet-screen')"></div>
+  </div>
+</div>
+
+<script>
+  const CORRECT_PIN = '1234';
+  let pin = '';
+  const dots = document.querySelectorAll('.dot');
+
+  function updateDots() {
+    dots.forEach((d, i) => d.classList.toggle('filled', i < pin.length));
   }
 
-  function pressKey(k) {
+  function pressKey(n) {
     if (pin.length >= 4) return;
-    pin += k;
-    updateIndicators();
-    if (pin.length === 4) {
-      setTimeout(checkPin, 300);
-    }
+    pin += n;
+    updateDots();
+    if (pin.length === 4) setTimeout(checkPin, 250);
   }
 
   function checkPin() {
-    if (pin === correctPin) {
-      alert('Logged in!');
-      // navigate or show next screen
+    if (pin === CORRECT_PIN) {
+      showScreen('home-screen');
     } else {
-      alert('Incorrect PIN');
-      pin = '';
-      updateIndicators();
+      dots.forEach(d => { d.style.borderColor='#c0392b'; d.style.background='#c0392b'; });
+      setTimeout(() => {
+        pin = '';
+        updateDots();
+        dots.forEach(d => { d.style.borderColor=''; d.style.background=''; });
+      }, 600);
     }
   }
 
-  document.querySelectorAll('.key').forEach(btn=>{
-    btn.addEventListener('click',()=> pressKey(btn.dataset.key));
-  });
-  document.getElementById('backspace').addEventListener('click',()=>{
-    pin = pin.slice(0,-1);
-    updateIndicators();
-  });
-  document.getElementById('reset-link').addEventListener('click',()=>{
-    alert('Reset flow');
-  });
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
 
-  // Hide keypad and center PIN area if tap outside keypad
-  document.body.addEventListener('click', function(e) {
-    if (!e.target.closest('.keypad') && !e.target.closest('.circle') && !e.target.closest('#reset-link')) {
-      keypad.classList.add('hide');
-      document.querySelector('.container > div').style.justifyContent = 'center';
-    }
+  document.querySelectorAll('.key[data-n]').forEach(btn => {
+    btn.addEventListener('click', () => pressKey(btn.dataset.n));
   });
-  // Show keypad on load
-  window.addEventListener('DOMContentLoaded', ()=>{
-    keypad.classList.remove('hide');
-    document.querySelector('.container > div').style.justifyContent = '';
+  document.getElementById('del-btn').addEventListener('click', () => {
+    pin = pin.slice(0, -1);
+    updateDots();
   });
 </script>
 </body>
