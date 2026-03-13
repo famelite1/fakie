@@ -17,16 +17,18 @@
 
   /* LOGIN */
   .login-top { flex: 1; display: flex; flex-direction: column; align-items: center; }
-  .logo-row { display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 1.5rem 1rem .5rem; }
+  .logo-row { display: flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 1.5rem 1rem .5rem; }
   .logo-row img:first-child { height: 5rem; }
   .logo-row img:last-child { height: 4rem; }
-  .warning { width: 100%; display: block; }
-  .warning img.banner { width: 100%; display: block; }
+  .warning { display: flex; justify-content: center; padding: 0 1rem; }
+  .warning img.banner { width: 100%; max-width: 420px; display: block; }
   .pin-title { margin-top: 2rem; font-size: 1.5rem; font-weight: 700; text-align: center; }
   .pin-dots { display: flex; gap: 1.6rem; margin: 1.5rem 0 1rem; }
-  .dot { width: 3rem; height: 3rem; border: 3px solid #666; border-radius: 50%; background: transparent; transition: background .1s; }
-  .dot.filled { background: #555; border-color: #555; }
-  .reset-link { color: #4da6ff; text-decoration: underline; font-size: 1rem; cursor: pointer; margin-bottom: 1.5rem; }
+  .dot { width: 3rem; height: 3rem; border: 1.5px solid #3a3a3a; border-radius: 50%; background: #3a3a3a; transition: background .1s, border-color .1s; position: relative; }
+  .dot.filled { background: #666; border-color: #666; }
+  .dot.filled::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 9px; height: 9px; border-radius: 50%; background: #aaa; }
+  .dot.active { background: transparent; border: 1.5px solid #ffffff; }
+  .reset-link { color: #a0ccff; text-decoration: underline; font-size: 1rem; cursor: pointer; margin-bottom: 1.5rem; }
 
   /* KEYPAD */
   .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: .35rem; padding: .5rem 1.5rem 2rem; width: 100%; background: #111; }
@@ -125,7 +127,10 @@
   const dots = document.querySelectorAll('.dot');
 
   function updateDots() {
-    dots.forEach((d, i) => d.classList.toggle('filled', i < pin.length));
+    dots.forEach((d, i) => {
+      d.classList.toggle('filled', i < pin.length);
+      d.classList.toggle('active', i === pin.length && pin.length < 4);
+    });
   }
 
   function pressKey(n) {
