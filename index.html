@@ -18,12 +18,12 @@
   /* LOGIN */
   .login-top { flex: 1; display: flex; flex-direction: column; align-items: center; }
   .logo-row { display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 1.5rem 1rem .5rem; }
-  .logo-row img { height: 3.2rem; }
-  .warning { display: flex; align-items: flex-start; gap: .7rem; background: #8b3500; color: #fff; padding: .85rem 1rem; width: 100%; border-left: 6px solid #d4a574; font-size: .95rem; font-weight: 500; line-height: 1.4; }
-  .warning img { width: 1.6rem; height: 1.6rem; flex-shrink: 0; margin-top: .05rem; }
+  .logo-row img { height: 4.5rem; }
+  .warning { width: 100%; display: block; }
+  .warning img.banner { width: 100%; display: block; }
   .pin-title { margin-top: 2rem; font-size: 1.5rem; font-weight: 700; text-align: center; }
-  .pin-dots { display: flex; gap: 1.2rem; margin: 1.5rem 0 1rem; }
-  .dot { width: 2.2rem; height: 2.2rem; border: 2.5px solid #666; border-radius: 50%; background: transparent; transition: background .1s; }
+  .pin-dots { display: flex; gap: 1.6rem; margin: 1.5rem 0 1rem; }
+  .dot { width: 3rem; height: 3rem; border: 3px solid #666; border-radius: 50%; background: transparent; transition: background .1s; }
   .dot.filled { background: #555; border-color: #555; }
   .reset-link { color: #4da6ff; text-decoration: underline; font-size: 1rem; cursor: pointer; margin-bottom: 1.5rem; }
 
@@ -84,8 +84,7 @@
       <img src="service-nsw.png" alt="Service NSW">
     </div>
     <div class="warning">
-      <img src="warning-icon.png" alt="!">
-      <span>Rego checks may be not be available from 5am on Sun 15 Mar to 8:30am on Sun 15 Mar.</span>
+      <img class="banner" src="banner.png" alt="Rego checks warning">
     </div>
     <div class="pin-title">Log in with PIN</div>
     <div class="pin-dots" id="pin-dots">
