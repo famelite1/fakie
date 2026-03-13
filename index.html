@@ -33,11 +33,25 @@
   /* hidden input to trigger native keyboard */
   #pin-input { position: fixed; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; z-index: 0; caret-color: transparent; border: none; background: transparent; color: transparent; font-size: 16px; }
 
-  /* SCREENSHOT SCREENS */
+  /* HOME / SCROLLABLE SCREENS */
+  .screen-top { flex-shrink: 0; width: 100%; }
+  .screen-top img { width: 100%; display: block; }
+  .screen-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .screen-scroll img { width: 100%; display: block; }
+  .scroll-img-wrap { position: relative; }
+  .scroll-img-wrap img { width: 100%; display: block; }
+  .card-hotspot { position: absolute; top: 52%; left: 17%; width: 68%; height: 22%; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .screen-bottom { flex-shrink: 0; width: 100%; position: relative; }
+  .screen-bottom img { width: 100%; display: block; }
+  .nav-hotspots { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; }
+  .hotspot { flex: 1; height: 100%; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+
+  /* LICENCE SCREEN */
+  #licence-screen { background: #000; }
+
+  /* SCREENSHOT SCREENS (legacy single-image screens) */
   .screenshot-screen { position: relative; width: 100%; height: 100vh; overflow-y: auto; }
   .screenshot-screen img.bg { width: 100%; display: block; }
-  .nav-hotspots { position: fixed; bottom: 0; left: 0; right: 0; height: 68px; display: flex; }
-  .hotspot { flex: 1; height: 100%; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 
   /* legacy classes kept so nothing breaks */
   .container { display:flex; flex-direction:column; }
@@ -67,19 +81,37 @@
   <input id="pin-input" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" autocorrect="off">
 </div>
 
-<!-- HOME SCREEN — drop home.png in the same folder -->
+<!-- HOME SCREEN -->
 <div id="home-screen" class="screen">
-  <div class="screenshot-screen">
-    <img class="bg" src="home.png" alt="Home">
+  <div class="screen-top">
+    <img src="home-top.png" alt="">
   </div>
-  <div class="nav-hotspots">
-    <div class="hotspot" onclick="showScreen('home-screen')"></div>
-    <div class="hotspot" onclick="showScreen('services-screen')"></div>
-    <div class="hotspot" onclick="showScreen('wallet-screen')"></div>
+  <div class="screen-scroll">
+    <div class="scroll-img-wrap">
+      <img src="home-scroll-1.png" alt="">
+      <div class="card-hotspot" onclick="showScreen('licence-screen')"></div>
+    </div>
+    <img src="home-scroll-2.png" alt="">
+  </div>
+  <div class="screen-bottom">
+    <img src="home-nav.png" alt="">
+    <div class="nav-hotspots">
+      <div class="hotspot" onclick="showScreen('home-screen')"></div>
+      <div class="hotspot" onclick="showScreen('services-screen')"></div>
+      <div class="hotspot" onclick="showScreen('wallet-screen')"></div>
+    </div>
   </div>
 </div>
 
-<!-- SERVICES SCREEN — drop services.png in the same folder -->
+<!-- LICENCE SCREEN — black placeholder, replace with images later -->
+<div id="licence-screen" class="screen">
+  <div style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+    <span onclick="showScreen('home-screen')" style="font-size: 1.5rem; cursor: pointer;">&#8592;</span>
+    <span style="font-size: 1.1rem; font-weight: 600;">Provisional Driver Licence</span>
+  </div>
+</div>
+
+<!-- SERVICES SCREEN
 <div id="services-screen" class="screen">
   <div class="screenshot-screen">
     <img class="bg" src="services.png" alt="Services">
