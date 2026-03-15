@@ -103,23 +103,12 @@
   .lic-sep { height: 1px; background: #2c2c2e; }
 
   /* holographic section */
-  .lic-holo { position: relative; overflow: hidden; background: #0a0a0f; }
-  .lic-holo-canvas { position: absolute; inset: 0; }
-  /* blob layers */
-  .lic-holo-canvas div { position: absolute; border-radius: 50%; }
-  .hb1 { width: 260px; height: 220px; top: -60px; left: -80px;
-    background: radial-gradient(circle, #6b21d4 0%, transparent 70%); opacity: 0.9; filter: blur(30px); }
-  .hb2 { width: 220px; height: 220px; top: -30px; left: 50px;
-    background: radial-gradient(circle, #0d8a6e 0%, transparent 70%); opacity: 0.85; filter: blur(28px); }
-  .hb3 { width: 200px; height: 180px; bottom: -40px; right: -30px;
-    background: radial-gradient(circle, #7e1fa6 0%, transparent 70%); opacity: 0.9; filter: blur(28px); }
-  .hb4 { width: 160px; height: 160px; top: 20px; right: 30px;
-    background: radial-gradient(circle, #c2185b 0%, transparent 70%); opacity: 0.55; filter: blur(25px); }
-  .hb5 { width: 180px; height: 140px; bottom: -20px; left: 40px;
-    background: radial-gradient(circle, #004d70 0%, transparent 70%); opacity: 0.7; filter: blur(30px); }
-  .hb6 { width: 120px; height: 120px; top: 50%; left: 40%;
-    background: radial-gradient(circle, #1a6b5c 0%, transparent 70%); opacity: 0.5; filter: blur(20px); }
-  .lic-holo-content { position: relative; display: flex; align-items: flex-start; gap: 0.8rem; padding: 1rem 1rem 1.1rem; }
+  .lic-holo { position: relative; overflow: hidden; background: #000; }
+  .lic-holo-bg { position: relative; width: 100%; }
+  .lic-holo-bg img { width: 100%; display: block; }
+  .lic-holo-overlay { position: absolute; inset: 0; mix-blend-mode: hue; opacity: 0.75; pointer-events: none;
+    background: linear-gradient(105deg, #ff000088, #ff7f0088, #ffff0088, #00ff0088, #0000ff88, #8b00ff88, #ff000088); }
+  .lic-holo-content { position: absolute; inset: 0; display: flex; align-items: flex-start; gap: 0.8rem; padding: 1rem 1rem 1.1rem; }
   .lic-holo-details { flex: 1; }
   .lic-lbl { font-size: 0.72rem; color: #ccc; margin-bottom: 0.15rem; }
   .lic-val { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.85rem; color: #fff; line-height: 1.1; }
@@ -272,13 +261,9 @@
 
     <!-- holographic section -->
     <div class="lic-holo">
-      <div class="lic-holo-canvas">
-        <div class="hb1"></div>
-        <div class="hb2"></div>
-        <div class="hb3"></div>
-        <div class="hb4"></div>
-        <div class="hb5"></div>
-        <div class="hb6"></div>
+      <div class="lic-holo-bg">
+        <img src="hollow.png" alt="">
+        <div class="lic-holo-overlay" id="holo-overlay"></div>
       </div>
       <div class="lic-holo-content">
         <div class="lic-holo-details">
@@ -379,6 +364,35 @@
   document.getElementById('login-screen').addEventListener('click', focusPinInput);
   updateDots();
   focusPinInput();
+
+  // Holographic tilt effect
+  const holoOverlay = document.getElementById('holo-overlay');
+  let holoAngle = 105;
+  function applyHolo(angle) {
+    holoOverlay.style.background =
+      `linear-gradient(${angle}deg,#ff000099,#ff7f0099,#ffff0099,#00ff0099,#00ffff99,#0000ff99,#8b00ff99,#ff000099)`;
+  }
+  applyHolo(holoAngle);
+  function requestOrientationPermission() {
+    if (typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission().then(state => {
+        if (state === 'granted') startHolo();
+      }).catch(() => {});
+    } else {
+      startHolo();
+    }
+  }
+  function startHolo() {
+    window.addEventListener('deviceorientation', e => {
+      const gamma = e.gamma || 0; // left-right tilt -90 to 90
+      const beta  = e.beta  || 0; // front-back tilt
+      const angle = 90 + gamma * 1.5 + beta * 0.5;
+      applyHolo(angle);
+    });
+  }
+  document.getElementById('licence-screen').addEventListener('click', requestOrientationPermission, { once: true });
+  startHolo();
 </script>
 </body>
 </html>
