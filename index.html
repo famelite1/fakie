@@ -33,28 +33,115 @@
   /* hidden input to trigger native keyboard */
   #pin-input { position: fixed; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; z-index: 0; caret-color: transparent; border: none; background: transparent; color: transparent; font-size: 16px; }
 
-  /* HOME / SCROLLABLE SCREENS */
-  .screen-top { flex-shrink: 0; width: 100%; }
-  .screen-top img { width: 100%; display: block; }
-  .screen-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-  .screen-scroll img { width: 100%; display: block; }
-  .scroll-img-wrap { position: relative; }
-  .scroll-img-wrap img { width: 100%; display: block; }
-  .card-hotspot { position: absolute; top: 52%; left: 17%; width: 68%; height: 22%; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-  .screen-bottom { flex-shrink: 0; width: 100%; position: relative; }
-  .screen-bottom img { width: 100%; display: block; }
-  .nav-hotspots { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; }
-  .hotspot { flex: 1; height: 100%; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  /* legacy */
+  .container { display: flex; flex-direction: column; }
+
+  /* HOME SCREEN */
+  .home-header { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1rem; flex-shrink: 0; }
+  .home-logo img { height: 2.2rem; }
+  .home-header-icons { display: flex; gap: 1.2rem; align-items: center; }
+  .home-header-icons svg { width: 1.6rem; height: 1.6rem; stroke: #ccc; fill: none; stroke-width: 1.5; }
+
+  .home-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+  .home-banner { margin: 0.4rem 0.9rem 0; background: #7a3b10; border-radius: 0.5rem; padding: 0.85rem 1rem; display: flex; gap: 0.75rem; align-items: flex-start; font-size: 0.88rem; line-height: 1.4; }
+  .home-banner-icon { flex-shrink: 0; font-style: normal; }
+
+  .home-sh { font-size: 1.15rem; font-weight: 700; padding: 1rem 1rem 0.7rem; }
+
+  .fav-row { display: flex; gap: 0.7rem; padding: 0 0.3rem; justify-content: flex-start; align-items: flex-start; }
+  .fav-empty { width: 64px; flex-shrink: 0; border: 2px dashed #444; border-radius: 0.75rem; min-height: 128px; display: flex; align-items: center; justify-content: center; }
+  .fav-empty svg { width: 1.5rem; height: 1.5rem; stroke: #666; fill: none; stroke-width: 1.5; }
+
+  .lic-card { width: 220px; background: #2c2c2e; border-radius: 0; overflow: hidden; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .lic-card-inner { padding: 0.9rem 0.9rem 0; }
+  .lic-card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .lic-card-title { font-weight: 700; font-size: 0.98rem; line-height: 1.3; }
+  .lic-card-nsw { height: 1.7rem; }
+  .lic-card-exp { font-size: 0.82rem; color: #aaa; margin-top: 0.45rem; padding-bottom: 0.8rem; }
+
+  .fav-dots { display: flex; justify-content: center; gap: 0.5rem; padding: 0.75rem 0; }
+  .fav-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .fav-dot.on { background: #fff; }
+  .fav-dot.off { border: 1.5px solid #666; }
+
+  .feat-bg { background: #1c1c1e; padding-bottom: 1rem; }
+  .feat-row { display: flex; gap: 0.7rem; padding: 0 0.9rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .feat-row::-webkit-scrollbar { display: none; }
+  .feat-card { flex-shrink: 0; width: 150px; background: #2c2c2e; border-radius: 0.75rem; overflow: hidden; }
+  .feat-card-img { width: 100%; height: 88px; display: block; object-fit: cover; }
+  .feat-card-body { padding: 0.45rem 0.6rem 0.6rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 0.3rem; }
+  .feat-card-label { font-size: 0.77rem; line-height: 1.3; flex: 1; }
+  .feat-card-ext svg { width: 0.9rem; height: 0.9rem; stroke: #aaa; fill: none; stroke-width: 1.5; }
+
+  .home-nav { flex-shrink: 0; display: flex; background: #1c1c1e; border-top: 1px solid #2a2a2a; padding-bottom: env(safe-area-inset-bottom, 0); }
+  .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0.55rem 0 0.35rem; gap: 0.2rem; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .nav-tab svg { width: 1.7rem; height: 1.7rem; fill: none; stroke-width: 1.5; }
+  .nav-tab span { font-size: 0.65rem; }
+  .nav-tab.nav-active { color: #e8847a; }
+  .nav-tab.nav-active svg { stroke: #e8847a; }
+  .nav-tab:not(.nav-active) { color: #bbb; }
+  .nav-tab:not(.nav-active) svg { stroke: #bbb; }
 
   /* LICENCE SCREEN */
-  #licence-screen { background: #000; }
+  #licence-screen { background: #111; }
+  .lic-nav { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0.5rem 0.75rem 0.2rem; flex-shrink: 0; background: #111; }
+  .lic-nav-back { background: none; border: none; color: #fff; font-size: 2rem; line-height: 1; cursor: pointer; padding: 0 0.6rem; }
+  .lic-nav-title { font-size: 0.95rem; font-weight: 600; flex: 1; text-align: center; }
+  .lic-nav-more { background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; padding: 0 0.6rem; letter-spacing: 0.05em; }
+  .lic-red-bar { height: 5px; background: linear-gradient(90deg, #b5002a, #e8003a); flex-shrink: 0; }
+  .lic-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; background: #111; }
 
-  /* SCREENSHOT SCREENS (legacy single-image screens) */
-  .screenshot-screen { position: relative; width: 100%; height: 100vh; overflow-y: auto; }
-  .screenshot-screen img.bg { width: 100%; display: block; }
+  /* top section: nsw logo, photo, refreshed */
+  .lic-top { display: flex; align-items: flex-start; justify-content: space-between; padding: 0.9rem 1rem 0; }
+  .lic-nsw-logo { height: 2.4rem; }
+  .lic-photo { width: 108px; height: 138px; background: #2a2a2e; border: 1.5px solid #555; overflow: hidden; flex-shrink: 0; }
+  .lic-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .lic-refreshed { font-size: 0.7rem; color: #999; text-align: right; line-height: 1.5; padding-top: 0.1rem; }
 
-  /* legacy classes kept so nothing breaks */
-  .container { display:flex; flex-direction:column; }
+  .lic-name { font-size: 1.25rem; font-weight: 800; text-align: center; padding: 0.8rem 1rem 0.9rem; letter-spacing: 0.01em; }
+  .lic-sep { height: 1px; background: #2c2c2e; }
+
+  /* holographic section */
+  .lic-holo { position: relative; overflow: hidden; background: #0a0a0f; }
+  .lic-holo-canvas { position: absolute; inset: 0; }
+  /* blob layers */
+  .lic-holo-canvas div { position: absolute; border-radius: 50%; }
+  .hb1 { width: 260px; height: 220px; top: -60px; left: -80px;
+    background: radial-gradient(circle, #6b21d4 0%, transparent 70%); opacity: 0.9; filter: blur(30px); }
+  .hb2 { width: 220px; height: 220px; top: -30px; left: 50px;
+    background: radial-gradient(circle, #0d8a6e 0%, transparent 70%); opacity: 0.85; filter: blur(28px); }
+  .hb3 { width: 200px; height: 180px; bottom: -40px; right: -30px;
+    background: radial-gradient(circle, #7e1fa6 0%, transparent 70%); opacity: 0.9; filter: blur(28px); }
+  .hb4 { width: 160px; height: 160px; top: 20px; right: 30px;
+    background: radial-gradient(circle, #c2185b 0%, transparent 70%); opacity: 0.55; filter: blur(25px); }
+  .hb5 { width: 180px; height: 140px; bottom: -20px; left: 40px;
+    background: radial-gradient(circle, #004d70 0%, transparent 70%); opacity: 0.7; filter: blur(30px); }
+  .hb6 { width: 120px; height: 120px; top: 50%; left: 40%;
+    background: radial-gradient(circle, #1a6b5c 0%, transparent 70%); opacity: 0.5; filter: blur(20px); }
+  .lic-holo-content { position: relative; display: flex; align-items: flex-start; gap: 0.8rem; padding: 1rem 1rem 1.1rem; }
+  .lic-holo-details { flex: 1; }
+  .lic-lbl { font-size: 0.72rem; color: #ccc; margin-bottom: 0.15rem; }
+  .lic-val { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.85rem; color: #fff; line-height: 1.1; }
+  .lic-val:last-child { margin-bottom: 0; }
+  .lic-qr-box { width: 115px; height: 115px; background: #fff; flex-shrink: 0; padding: 4px; }
+  .lic-qr-box img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+  /* dob / class / conditions */
+  .lic-dob { padding: 0.85rem 1rem; }
+  .lic-dob-val { font-size: 1rem; font-weight: 700; margin-top: 0.2rem; display: flex; align-items: center; gap: 0.5rem; }
+  .lic-u18 { font-size: 0.7rem; color: #ccc; background: #2c2c2e; border-radius: 999px; padding: 0.18rem 0.65rem; border: 1px solid #444; }
+  .lic-2col { display: flex; border-top: 1px solid #2c2c2e; border-bottom: 1px solid #2c2c2e; }
+  .lic-2col-cell { flex: 1; padding: 0.85rem 1rem; }
+  .lic-2col-cell:first-child { border-right: 1px solid #2c2c2e; }
+  .lic-2col-head { display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: #999; margin-bottom: 0.3rem; }
+  .lic-2col-val { font-size: 1rem; font-weight: 700; }
+  .lic-info-icon { display: inline-flex; }
+  .lic-addr { display: flex; align-items: center; gap: 0.8rem; padding: 0.85rem 1rem; }
+  .lic-addr-thumb { width: 46px; height: 46px; border-radius: 50%; background: #2a2a2e; overflow: hidden; flex-shrink: 0; border: 1px solid #444; }
+  .lic-addr-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .lic-addr-lbl { font-size: 0.72rem; color: #999; margin-bottom: 0.2rem; }
+  .lic-addr-val { font-size: 0.95rem; font-weight: 700; }
 </style>
 </head>
 <body>
@@ -83,57 +170,168 @@
 
 <!-- HOME SCREEN -->
 <div id="home-screen" class="screen">
-  <div class="screen-top">
-    <img src="home-top.png" alt="">
-  </div>
-  <div class="screen-scroll">
-    <div class="scroll-img-wrap">
-      <img src="home-scroll-1.png" alt="">
-      <div class="card-hotspot" onclick="showScreen('licence-screen')"></div>
-    </div>
-    <img src="home-scroll-2.png" alt="">
-  </div>
-  <div class="screen-bottom">
-    <img src="home-nav.png" alt="">
-    <div class="nav-hotspots">
-      <div class="hotspot" onclick="showScreen('home-screen')"></div>
-      <div class="hotspot" onclick="showScreen('services-screen')"></div>
-      <div class="hotspot" onclick="showScreen('wallet-screen')"></div>
+
+  <!-- fixed header -->
+  <div class="home-header">
+    <div class="home-logo"><img src="service-nsw.png" alt="Service NSW"></div>
+    <div class="home-header-icons">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 11a3 3 0 100-6 3 3 0 000 6zm-5.2 6.8a6 6 0 0110.4 0"/></svg>
     </div>
   </div>
+
+  <!-- scrollable middle -->
+  <div class="home-scroll">
+
+    <!-- orange warning banner -->
+    <div style="display:flex; justify-content:center; padding: 0 1rem; margin-top:0.15rem;">
+      <img src="banner.png" alt="Rego checks warning" style="width:100%; max-width:420px; display:block;">
+    </div>
+
+    <!-- favourites -->
+    <div class="home-sh">Favourites</div>
+    <div class="fav-row">
+      <img src="p2.png" alt="" style="width:64px; height:auto; display:block; flex-shrink:0; margin-left:-0.3rem; margin-top:1rem;">
+      <img src="p1.png" alt="Provisional Driver Licence" onclick="showScreen('licence-screen')" style="width:270px; height:auto; display:block; margin-left:0.3rem; margin-top:0.4rem; cursor:pointer; -webkit-tap-highlight-color:transparent;">
+    </div>
+    <div class="fav-dots">
+      <div class="fav-dot on"></div>
+      <div class="fav-dot off"></div>
+    </div>
+
+    <!-- featured -->
+    <div class="feat-bg">
+      <div class="home-sh">Featured</div>
+      <div class="feat-row">
+        <div class="feat-card">
+          <div class="feat-card-img" style="background:#3a3a3c;"></div>
+          <div class="feat-card-body">
+            <span class="feat-card-label">Rate your app experience</span>
+            <span class="feat-card-ext"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
+          </div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-img" style="background:#3a3a3c;"></div>
+          <div class="feat-card-body">
+            <span class="feat-card-label">Use the Savings Finder</span>
+            <span class="feat-card-ext"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
+          </div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-card-img" style="background:#2a6d6d;"></div>
+          <div class="feat-card-body">
+            <span class="feat-card-label">Enrol in online services</span>
+            <span class="feat-card-ext"><svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- services heading -->
+    <div class="home-sh">Services</div>
+
+  </div>
+
+  <!-- fixed bottom nav -->
+  <div class="home-nav">
+    <div class="nav-tab nav-active" onclick="showScreen('home-screen')">
+      <svg viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      <span>Home</span>
+    </div>
+    <div class="nav-tab" onclick="showScreen('services-screen')">
+      <svg viewBox="0 0 24 24"><path d="M3 6h18l-2 9H5L3 6z"/><path d="M3 6L2 3H1"/><circle cx="9" cy="19" r="1"/><circle cx="17" cy="19" r="1"/><path d="M9 13h6"/></svg>
+      <span>Services</span>
+    </div>
+    <div class="nav-tab" onclick="showScreen('wallet-screen')">
+      <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="16" cy="15" r="1" fill="#bbb"/></svg>
+      <span>Wallet</span>
+    </div>
+  </div>
+
 </div>
 
-<!-- LICENCE SCREEN — black placeholder, replace with images later -->
+<!-- LICENCE SCREEN -->
 <div id="licence-screen" class="screen">
-  <div style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
-    <span onclick="showScreen('home-screen')" style="font-size: 1.5rem; cursor: pointer;">&#8592;</span>
-    <span style="font-size: 1.1rem; font-weight: 600;">Provisional Driver Licence</span>
+  <div class="lic-nav">
+    <button class="lic-nav-back" onclick="showScreen('home-screen')">&#8249;</button>
+    <span class="lic-nav-title">Provisional Driver Licence</span>
+    <button class="lic-nav-more">&#8942;</button>
+  </div>
+  <div class="lic-red-bar"></div>
+  <div class="lic-scroll">
+
+    <!-- top: logo / photo / refreshed -->
+    <div class="lic-top">
+      <img class="lic-nsw-logo" src="nsw-logo.png" alt="NSW">
+      <div class="lic-photo"><img src="face.png" alt=""></div>
+      <div class="lic-refreshed">Refreshed<br>14 Mar 2026<br>11:47 pm</div>
+    </div>
+
+    <div class="lic-name">Mitchell Daniel JOHNSTON</div>
+    <div class="lic-sep"></div>
+
+    <!-- holographic section -->
+    <div class="lic-holo">
+      <div class="lic-holo-canvas">
+        <div class="hb1"></div>
+        <div class="hb2"></div>
+        <div class="hb3"></div>
+        <div class="hb4"></div>
+        <div class="hb5"></div>
+        <div class="hb6"></div>
+      </div>
+      <div class="lic-holo-content">
+        <div class="lic-holo-details">
+          <div class="lic-lbl">Licence number</div>
+          <div class="lic-val">25661645</div>
+          <div class="lic-lbl">Expiry</div>
+          <div class="lic-val">25 Aug 2027</div>
+        </div>
+        <div class="lic-qr-box"><img src="qr.png" alt="QR"></div>
+      </div>
+    </div>
+
+    <div class="lic-sep"></div>
+
+    <!-- date of birth -->
+    <div class="lic-dob">
+      <div class="lic-lbl">Date of birth</div>
+      <div class="lic-dob-val">16 Dec 2008 <span class="lic-u18">Under 18</span></div>
+    </div>
+
+    <!-- class / conditions -->
+    <div class="lic-2col">
+      <div class="lic-2col-cell">
+        <div class="lic-2col-head">Class
+          <span class="lic-info-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#888" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+        </div>
+        <div class="lic-2col-val">C P1</div>
+      </div>
+      <div class="lic-2col-cell">
+        <div class="lic-2col-head">Conditions
+          <span class="lic-info-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#888" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+        </div>
+        <div class="lic-2col-val">A, Y</div>
+      </div>
+    </div>
+
+    <!-- address -->
+    <div class="lic-addr">
+      <div class="lic-addr-thumb"><img src="face.png" alt=""></div>
+      <div>
+        <div class="lic-addr-lbl">Address</div>
+        <div class="lic-addr-val">34 BOTTLEBRUSH DR</div>
+      </div>
+    </div>
+
   </div>
 </div>
 
-<!-- SERVICES SCREEN
-<div id="services-screen" class="screen">
-  <div class="screenshot-screen">
-    <img class="bg" src="services.png" alt="Services">
-  </div>
-  <div class="nav-hotspots">
-    <div class="hotspot" onclick="showScreen('home-screen')"></div>
-    <div class="hotspot" onclick="showScreen('services-screen')"></div>
-    <div class="hotspot" onclick="showScreen('wallet-screen')"></div>
-  </div>
-</div>
+<!-- SERVICES SCREEN — to be built -->
+<div id="services-screen" class="screen" style="background:#000;"></div>
 
-<!-- WALLET SCREEN — drop wallet.png in the same folder -->
-<div id="wallet-screen" class="screen">
-  <div class="screenshot-screen">
-    <img class="bg" src="wallet.png" alt="Wallet">
-  </div>
-  <div class="nav-hotspots">
-    <div class="hotspot" onclick="showScreen('home-screen')"></div>
-    <div class="hotspot" onclick="showScreen('services-screen')"></div>
-    <div class="hotspot" onclick="showScreen('wallet-screen')"></div>
-  </div>
-</div>
+<!-- WALLET SCREEN — to be built -->
+<div id="wallet-screen" class="screen" style="background:#000;"></div>
 
 <script>
   const CORRECT_PIN = '1234';
