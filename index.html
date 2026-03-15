@@ -107,7 +107,7 @@
   .lic-holo-bg { position: relative; width: 100%; }
   .lic-holo-bg img { width: 100%; display: block; }
   .lic-holo-overlay { position: absolute; inset: 0; pointer-events: none; }
-  #holo-canvas { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: color; opacity: 0.92; display: block; }
+  #holo-canvas { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: screen; opacity: 0.88; display: block; }
   .lic-holo-content { position: absolute; inset: 0; display: flex; align-items: flex-start; gap: 0.8rem; padding: 1rem 1rem 1.1rem; }
   .lic-holo-details { flex: 1; }
   .lic-lbl { font-size: 0.72rem; color: #ccc; margin-bottom: 0.15rem; }
@@ -370,15 +370,15 @@
   // ── Plasma holographic canvas ──────────────────────────────
   const holoCanvas = document.getElementById('holo-canvas');
   const ctx = holoCanvas.getContext('2d');
-  let gyroGamma = 0, gyroBeta = 0, plasmaT = 0;
+  let gyroGamma = 0, gyroBeta = 0, plasmaT = 0, plasmaRunning = false;
 
   function resizeHoloCanvas() {
-    const rect = holoCanvas.parentElement.getBoundingClientRect();
-    holoCanvas.width  = Math.round(rect.width);
-    holoCanvas.height = Math.round(rect.height);
+    const parent = holoCanvas.closest('.lic-holo-bg');
+    const img = parent ? parent.querySelector('img') : null;
+    const w = img ? img.offsetWidth  : holoCanvas.parentElement.offsetWidth;
+    const h = img ? img.offsetHeight : holoCanvas.parentElement.offsetHeight;
+    if (w > 0 && h > 0) { holoCanvas.width = w; holoCanvas.height = h; }
   }
-  resizeHoloCanvas();
-  new ResizeObserver(resizeHoloCanvas).observe(holoCanvas.parentElement);
 
   function hslToRgb(h, s, l) {
     s /= 100; l /= 100;
@@ -418,7 +418,16 @@
     plasmaT += 0.022;
     requestAnimationFrame(drawPlasma);
   }
-  drawPlasma();
+
+  // Start plasma when licence screen becomes visible
+  const _origShowScreen = showScreen;
+  function showScreen(id) {
+    _origShowScreen(id);
+    if (id === 'licence-screen') {
+      resizeHoloCanvas();
+      if (!plasmaRunning) { plasmaRunning = true; drawPlasma(); }
+    }
+  }
 
   function requestOrientationPermission() {
     if (typeof DeviceOrientationEvent !== 'undefined' &&
