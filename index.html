@@ -106,10 +106,8 @@
   .lic-holo { position: relative; overflow: hidden; background: #000; }
   .lic-holo-bg { position: relative; width: 100%; }
   .lic-holo-bg img { width: 100%; display: block; }
-  .lic-holo-overlay { position: absolute; inset: 0; mix-blend-mode: hue; opacity: 0.8; pointer-events: none;
-    background: repeating-linear-gradient(105deg,
-      #ff0000, #ff7f00 8%, #ffff00 16%, #00ff00 24%, #00ffff 32%, #0000ff 40%, #8b00ff 48%, #ff0000 56%);
-    background-size: 400% 400%; transition: background-position 0.05s linear; }
+  .lic-holo-overlay { position: absolute; inset: 0; pointer-events: none; }
+  #holo-canvas { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: color; opacity: 0.92; display: block; }
   .lic-holo-content { position: absolute; inset: 0; display: flex; align-items: flex-start; gap: 0.8rem; padding: 1rem 1rem 1.1rem; }
   .lic-holo-details { flex: 1; }
   .lic-lbl { font-size: 0.72rem; color: #ccc; margin-bottom: 0.15rem; }
@@ -265,7 +263,9 @@
     <div class="lic-holo">
       <div class="lic-holo-bg">
         <img src="hollow.png" alt="">
-        <div class="lic-holo-overlay" id="holo-overlay"></div>
+        <div class="lic-holo-overlay">
+          <canvas id="holo-canvas"></canvas>
+        </div>
       </div>
       <div class="lic-holo-content">
         <div class="lic-holo-details">
@@ -367,15 +367,59 @@
   updateDots();
   focusPinInput();
 
-  // Holographic tilt effect
-  const holoOverlay = document.getElementById('holo-overlay');
-  function applyHolo(gamma, beta) {
-    // shift the pattern position based on tilt so colours sweep across the image
-    const x = ((gamma + 90) / 180) * 300; // 0–300%
-    const y = ((beta  + 90) / 180) * 300;
-    holoOverlay.style.backgroundPosition = `${x}% ${y}%`;
+  // ── Plasma holographic canvas ──────────────────────────────
+  const holoCanvas = document.getElementById('holo-canvas');
+  const ctx = holoCanvas.getContext('2d');
+  let gyroGamma = 0, gyroBeta = 0, plasmaT = 0;
+
+  function resizeHoloCanvas() {
+    const rect = holoCanvas.parentElement.getBoundingClientRect();
+    holoCanvas.width  = Math.round(rect.width);
+    holoCanvas.height = Math.round(rect.height);
   }
-  applyHolo(0, 0);
+  resizeHoloCanvas();
+  new ResizeObserver(resizeHoloCanvas).observe(holoCanvas.parentElement);
+
+  function hslToRgb(h, s, l) {
+    s /= 100; l /= 100;
+    const k = n => (n + h / 30) % 12;
+    const a = s * Math.min(l, 1 - l);
+    const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+    return [Math.round(f(0)*255), Math.round(f(8)*255), Math.round(f(4)*255)];
+  }
+
+  function drawPlasma() {
+    const W = holoCanvas.width, H = holoCanvas.height;
+    if (!W || !H) return;
+    const scale = 28;
+    // tilt offsets shift the plasma origin so it moves with the phone
+    const ox = gyroGamma * 0.18;
+    const oy = gyroBeta  * 0.12;
+    const img = ctx.createImageData(W, H);
+    const d = img.data;
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        const fx = (x + ox) / scale;
+        const fy = (y + oy) / scale;
+        const v =
+          Math.sin(fx + plasmaT) +
+          Math.sin(fy * 0.9 + plasmaT * 1.1) +
+          Math.sin((fx + fy) * 0.7 + plasmaT * 0.8) +
+          Math.sin(Math.sqrt((fx - ox * 0.05) * (fx - ox * 0.05) + (fy - oy * 0.05) * (fy - oy * 0.05)) + plasmaT) +
+          Math.sin(fx * 0.5 - fy * 0.8 + plasmaT * 1.3);
+        // map -5..5 → 0..360 hue, full saturation, mid lightness
+        const h = ((v + 5) / 10) * 360;
+        const [r, g, b] = hslToRgb(h, 100, 55);
+        const i = (y * W + x) * 4;
+        d[i] = r; d[i+1] = g; d[i+2] = b; d[i+3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    plasmaT += 0.022;
+    requestAnimationFrame(drawPlasma);
+  }
+  drawPlasma();
+
   function requestOrientationPermission() {
     if (typeof DeviceOrientationEvent !== 'undefined' &&
         typeof DeviceOrientationEvent.requestPermission === 'function') {
@@ -388,9 +432,8 @@
   }
   function startHolo() {
     window.addEventListener('deviceorientation', e => {
-      const gamma = e.gamma || 0;
-      const beta  = e.beta  || 0;
-      applyHolo(gamma, beta);
+      gyroGamma = e.gamma || 0;
+      gyroBeta  = e.beta  || 0;
     });
   }
   document.getElementById('licence-screen').addEventListener('click', requestOrientationPermission, { once: true });
