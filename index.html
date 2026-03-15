@@ -103,12 +103,12 @@
   .lic-sep { height: 1px; background: #2c2c2e; }
 
   /* holographic section */
-  .lic-holo { position: relative; overflow: hidden; background: #000; }
-  .lic-holo-bg { position: relative; width: 100%; }
+  .lic-holo { position: relative; background: #000; }
+  .lic-holo-bg { position: relative; width: 100%; isolation: isolate; }
   .lic-holo-bg img { width: 100%; display: block; }
   .lic-holo-overlay { position: absolute; inset: 0; pointer-events: none; }
   #holo-canvas { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: screen; opacity: 0.88; display: block; }
-  .lic-holo-content { position: absolute; inset: 0; display: flex; align-items: flex-start; gap: 0.8rem; padding: 1rem 1rem 1.1rem; }
+  .lic-holo-content { position: absolute; inset: 0; display: flex; align-items: flex-start; gap: 0.8rem; padding: 1rem 1rem 1.1rem; z-index: 1; }
   .lic-holo-details { flex: 1; }
   .lic-lbl { font-size: 0.72rem; color: #ccc; margin-bottom: 0.15rem; }
   .lic-val { font-size: 1.3rem; font-weight: 800; margin-bottom: 0.85rem; color: #fff; line-height: 1.1; }
@@ -354,30 +354,12 @@
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-  }
-
-  pinInput.addEventListener('input', () => {
-    pin = pinInput.value.replace(/\D/g, '').slice(0, 4);
-    pinInput.value = pin;
-    updateDots();
-    if (pin.length === 4) setTimeout(checkPin, 250);
-  });
-
-  document.getElementById('login-screen').addEventListener('click', focusPinInput);
-  updateDots();
-  focusPinInput();
-
-  // ── Plasma holographic canvas ──────────────────────────────
-  const holoCanvas = document.getElementById('holo-canvas');
-  const ctx = holoCanvas.getContext('2d');
-  let gyroGamma = 0, gyroBeta = 0, plasmaT = 0, plasmaRunning = false;
-
-  function resizeHoloCanvas() {
-    const parent = holoCanvas.closest('.lic-holo-bg');
-    const img = parent ? parent.querySelector('img') : null;
-    const w = img ? img.offsetWidth  : holoCanvas.parentElement.offsetWidth;
-    const h = img ? img.offsetHeight : holoCanvas.parentElement.offsetHeight;
-    if (w > 0 && h > 0) { holoCanvas.width = w; holoCanvas.height = h; }
+    if (id === 'licence-screen') {
+      setTimeout(() => {
+        resizeHoloCanvas();
+        if (!plasmaRunning) { plasmaRunning = true; drawPlasma(); }
+      }, 50);
+    }
   }
 
   function hslToRgb(h, s, l) {
@@ -419,14 +401,28 @@
     requestAnimationFrame(drawPlasma);
   }
 
-  // Start plasma when licence screen becomes visible
-  const _origShowScreen = showScreen;
-  function showScreen(id) {
-    _origShowScreen(id);
-    if (id === 'licence-screen') {
-      resizeHoloCanvas();
-      if (!plasmaRunning) { plasmaRunning = true; drawPlasma(); }
-    }
+  pinInput.addEventListener('input', () => {
+    pin = pinInput.value.replace(/\D/g, '').slice(0, 4);
+    pinInput.value = pin;
+    updateDots();
+    if (pin.length === 4) setTimeout(checkPin, 250);
+  });
+
+  document.getElementById('login-screen').addEventListener('click', focusPinInput);
+  updateDots();
+  focusPinInput();
+
+  // ── Plasma holographic canvas ──────────────────────────────
+  const holoCanvas = document.getElementById('holo-canvas');
+  const ctx = holoCanvas.getContext('2d');
+  let gyroGamma = 0, gyroBeta = 0, plasmaT = 0, plasmaRunning = false;
+
+  function resizeHoloCanvas() {
+    const parent = holoCanvas.closest('.lic-holo-bg');
+    const img = parent ? parent.querySelector('img') : null;
+    const w = img ? img.offsetWidth  : holoCanvas.parentElement.offsetWidth;
+    const h = img ? img.offsetHeight : holoCanvas.parentElement.offsetHeight;
+    if (w > 0 && h > 0) { holoCanvas.width = w; holoCanvas.height = h; }
   }
 
   function requestOrientationPermission() {
